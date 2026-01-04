@@ -25,9 +25,13 @@ This project is in early planning and development. See the [Roadmap](docs/ROADMA
 
 - .NET 10 or later
 - Visual Studio 2026 or Visual Studio Code
-- Git
+- git
+- bd (Beads)
+- gh (Github CLI)
 
-## Getting Started
+## Contributing
+
+Contributions are welcome. Please follow the code style guidelines in [AGENTS.md](AGENTS.md).
 
 ### Clone the repository
 ```bash
@@ -37,12 +41,12 @@ cd fitblaze
 
 ### Build
 ```bash
-dotnet build
+dotnet build .\FitBlaze.slnx
 ```
 
 ### Run (when code is ready)
 ```bash
-dotnet run
+dotnet run --project .\FitBlaze\FitBlaze.csproj
 ```
 
 ### Run tests (when tests are added)
@@ -50,43 +54,7 @@ dotnet run
 dotnet test
 ```
 
-## Project Structure
-
-```
-fitblaze/
-├── docs/               # Documentation
-│   └── ROADMAP.md     # Feature roadmap and epics
-├── FitBlaze/          # Main project (when created)
-├── AGENTS.md          # Build commands and code guidelines
-├── README.md          # This file
-└── LICENSE            # MIT License
-```
-
-## Documentation
-
-- **[Roadmap](docs/ROADMAP.md)** — Detailed epics, MVP scope, and feature breakdown
-- **[AGENTS.md](AGENTS.md)** — Build/test commands, architecture, and code style guidelines
-
-## Development
-
-### Commands
-
-| Command | Purpose |
-|---------|---------|
-| `dotnet build` | Build the project |
-| `dotnet build -c Release` | Build for release |
-| `dotnet run` | Run the application |
-| `dotnet test` | Run all tests |
-| `dotnet test --filter "FullyQualifiedName~TestName"` | Run a specific test |
-| `dotnet watch run` | Run with file watching |
-| `dotnet format` | Format code |
-| `dotnet clean` | Clean build artifacts |
-
 For more details, see [AGENTS.md](AGENTS.md).
-
-## Contributing
-
-Contributions are welcome. Please follow the code style guidelines in [AGENTS.md](AGENTS.md).
 
 ## License
 
