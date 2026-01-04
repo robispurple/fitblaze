@@ -4,6 +4,21 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Version Condition="'$(GitVersion_SemVer)' != ''">$(GitVersion_SemVer)</Version>
+    <Version Condition="'$(Version)' == ''">0.1.0</Version>
+    <InformationalVersion Condition="'$(GitVersion_InformationalVersion)' != ''">$(GitVersion_InformationalVersion)</InformationalVersion>
+    <InformationalVersion Condition="'$(InformationalVersion)' == ''">0.1.0</InformationalVersion>
+    <FileVersion Condition="'$(GitVersion_MajorMinorPatch)' != ''">$(GitVersion_MajorMinorPatch)</FileVersion>
+    <FileVersion Condition="'$(FileVersion)' == ''">0.1.0</FileVersion>
+    <AssemblyVersion Condition="'$(GitVersion_Major)' != ''">$(GitVersion_Major).$(GitVersion_Minor).0.0</AssemblyVersion>
+    <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">0.1.0.0</AssemblyVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GitVersion.MsBuild" Version="6.5.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
 
 </Project>

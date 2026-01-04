@@ -1,10 +1,10 @@
-name: CI
+name: CI/CD
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 jobs:
   codeql-analysis:
@@ -74,3 +74,51 @@ jobs:
         with:
           name: test-results
           path: "**/TestResults/**"
+
+  release:
+    name: Generate Changelog & Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build-and-test
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Install Versionize
+        run: dotnet tool install --global Versionize
+
+      - name: Get current version
+        id: gitversion
+        run: |
+          VERSION=$(dotnet tool run dotnet-gitversion | grep -oP '"SemVer":\s*"\K[^"]+')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Configure git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Generate changelog with Versionize
+        run: |
+          versionize --skip-version
+        continue-on-error: true
+
+      - name: Commit and push changelog
+        run: |
+          if git diff --quiet; then
+            echo "No changelog changes to commit"
+          else
+            git add CHANGELOG.md .versionize
+            git commit -m "chore: generate changelog for release"
+            git push
+          fi
+        continue-on-error: true

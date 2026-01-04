@@ -1,0 +1,87 @@
+# GitVersion Configuration
+# Based on GitFlow workflow: https://gitversion.net/docs/workflows/gitflow
+# 
+# This configuration enables semantic versioning with the following branching strategy:
+# - main: Production releases (no pre-release tag)
+# - develop: Development integration branch (alpha pre-release tag)
+# - release/*: Release branches (beta pre-release tag)
+# - feature/*: Feature branches (feature branch name as pre-release tag)
+# - hotfix/*: Hotfix branches (beta pre-release tag)
+# - support/*: Support branches for older versions (no pre-release tag)
+
+assembly-versioning-scheme: MajorMinorPatch
+assembly-file-versioning-scheme: MajorMinorPatch
+tag-prefix: '[vV]?'
+version-in-branch-pattern: (?<version>[vV]?\d+(\.\d+)?(\.\d+)?).*
+major-version-bump-message: \+semver:\s?(breaking|major)
+minor-version-bump-message: \+semver:\s?(feature|minor)
+patch-version-bump-message: \+semver:\s?(fix|patch)
+no-bump-message: \+semver:\s?(none|skip)
+commit-date-format: yyyy-MM-dd
+semantic-version-format: Strict
+
+branches:
+  develop:
+    label: alpha
+    increment: Minor
+    track-merge-target: true
+    regex: ^dev(elop)?(ment)?$
+    source-branches:
+      - main
+
+  main:
+    label: ''
+    increment: Patch
+    regex: ^master$|^main$
+    source-branches: []
+
+  release:
+    label: beta
+    increment: Patch
+    regex: ^releases?[\/-](?<version>.+)
+    source-branches:
+      - main
+      - develop
+      - support
+
+  feature:
+    label: '{BranchName}'
+    increment: Inherit
+    regex: ^features?[\/-](?<BranchName>.+)
+    source-branches:
+      - develop
+      - main
+      - release
+      - support
+      - hotfix
+
+  pull-request:
+    label: PullRequest{Number}
+    increment: Inherit
+    regex: ^(pull-requests|pull|pr)[\/-](?<Number>\d+)
+    source-branches:
+      - develop
+      - main
+      - release
+      - feature
+      - support
+      - hotfix
+
+  hotfix:
+    label: beta
+    increment: Patch
+    regex: ^hotfixes?[\/-](?<version>.+)
+    source-branches:
+      - main
+      - support
+
+  support:
+    label: ''
+    increment: Patch
+    regex: ^support[\/-](?<version>.+)
+    source-branches:
+      - main
+
+ignore:
+  sha: []
+  paths: []

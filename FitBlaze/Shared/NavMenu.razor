@@ -1,6 +1,8 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">FitBlaze</a>
+        <a class="navbar-brand" href="">
+            FitBlaze <span class="version-badge">v@(Version)</span>
+        </a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -31,6 +33,14 @@
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private string Version { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        var version = typeof(NavMenu).Assembly.GetName().Version;
+        Version = version?.ToString(3) ?? "0.0.1"; // Format as major.minor.patch
+    }
 
     private void ToggleNavMenu()
     {
