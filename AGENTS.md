@@ -57,7 +57,7 @@ bd list --overdue               # Due date in past (not closed)
 
 1. **Check for ready work**: Run `bd ready` to see what's unblocked
 2. **Claim your task**: `bd update <id> --status in_progress`
-3. **Work on it**: Implement, test, document
+3. **Work on it**: Implement, test, document the task in a dedicated branch
 4. **Discover new work**: If you find bugs or TODOs, create issues:
    - `bd create "Found bug in auth" -t bug -p 1 --json`
    - Link it: `bd dep add <new-id> <current-id> --type discovered-from`
