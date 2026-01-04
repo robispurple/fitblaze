@@ -5,23 +5,33 @@ using Xunit;
 
 namespace FitBlaze.Tests.Pages
 {
-    public class CounterTests : TestContext
+    /// <summary>
+    /// Unit tests for the Counter Blazor component.
+    /// Tests the counter's ability to display and increment the current count value.
+    /// </summary>
+    public class CounterTests : BunitContext
     {
+        /// <summary>
+        /// Verifies that the Counter component displays an initial count of 0.
+        /// </summary>
         [Fact]
         public void Counter_DisplaysInitialCount()
         {
             // Arrange & Act
-            var cut = RenderComponent<Counter>();
+            var cut = Render<Counter>();
 
             // Assert
             cut.Find("p[role='status']").TextContent.Should().Contain("Current count: 0");
         }
 
+        /// <summary>
+        /// Verifies that clicking the button increments the counter by 1.
+        /// </summary>
         [Fact]
         public void Counter_IncrementsCountOnButtonClick()
         {
             // Arrange
-            var cut = RenderComponent<Counter>();
+            var cut = Render<Counter>();
 
             // Act
             cut.Find("button").Click();
@@ -30,11 +40,14 @@ namespace FitBlaze.Tests.Pages
             cut.Find("p[role='status']").TextContent.Should().Contain("Current count: 1");
         }
 
+        /// <summary>
+        /// Verifies that the counter correctly accumulates multiple button clicks.
+        /// </summary>
         [Fact]
         public void Counter_IncrementsCountMultipleTimes()
         {
             // Arrange
-            var cut = RenderComponent<Counter>();
+            var cut = Render<Counter>();
 
             // Act
             var button = cut.Find("button");
