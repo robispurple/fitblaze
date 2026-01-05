@@ -96,11 +96,13 @@
         isLoading = true;
         try
         {
+            Console.WriteLine($"[PageViewer] Loading page with slug: '{Slug}'");
             currentPage = await PageService.GetPageBySlugAsync(Slug!);
+            Console.WriteLine($"[PageViewer] Page found: {(currentPage != null ? currentPage.Title : "null")}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading page: {ex.Message}");
+            Console.WriteLine($"[PageViewer] Error loading page: {ex.Message}");
         }
         finally
         {

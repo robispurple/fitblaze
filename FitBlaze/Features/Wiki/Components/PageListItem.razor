@@ -60,6 +60,7 @@
         }
         else
         {
+            Console.WriteLine($"[PageListItem] Navigating to page: {Page.Title} (slug: {Page.Slug})");
             OnNavigate.InvokeAsync(Page.Slug);
         }
     }
