@@ -207,13 +207,15 @@
             if (isEditing && currentPage != null)
             {
                 var parentId = string.IsNullOrEmpty(form.ParentIdString) ? (Guid?)null : Guid.Parse(form.ParentIdString);
-                await PageService.UpdatePageAsync(currentPage.Id, form.Title, form.Content ?? "", form.Slug, parentId, form.Tags);
-                Navigation.NavigateTo($"/wiki/{form.Slug}");
+                var slug = string.IsNullOrEmpty(form.Slug) ? null : form.Slug;
+                var updated = await PageService.UpdatePageAsync(currentPage.Id, form.Title, form.Content ?? "", slug, parentId, form.Tags);
+                Navigation.NavigateTo($"/wiki/{updated.Slug}");
             }
             else
             {
                 var parentId = string.IsNullOrEmpty(form.ParentIdString) ? (Guid?)null : Guid.Parse(form.ParentIdString);
-                var newPage = await PageService.CreatePageAsync(form.Title, form.Content ?? "", parentId, form.Slug, form.Tags);
+                var slug = string.IsNullOrEmpty(form.Slug) ? null : form.Slug;
+                var newPage = await PageService.CreatePageAsync(form.Title, form.Content ?? "", parentId, slug, form.Tags);
                 Navigation.NavigateTo($"/wiki/{newPage.Slug}");
             }
         }
