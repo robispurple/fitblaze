@@ -3,7 +3,7 @@
 # 
 # This configuration enables semantic versioning with the following branching strategy:
 # - main: Production releases (no pre-release tag)
-# - develop: Development integration branch (alpha pre-release tag)
+# - dev: Development integration branch (alpha pre-release tag)
 # - release/*: Release branches (beta pre-release tag)
 # - feature/*: Feature branches (feature branch name as pre-release tag)
 # - hotfix/*: Hotfix branches (beta pre-release tag)
@@ -21,7 +21,7 @@ commit-date-format: yyyy-MM-dd
 semantic-version-format: Strict
 
 branches:
-  develop:
+  dev:
     label: alpha
     increment: Minor
     track-merge-target: true
@@ -41,7 +41,7 @@ branches:
     regex: ^releases?[\/-](?<version>.+)
     source-branches:
       - main
-      - develop
+      - dev
       - support
 
   feature:
@@ -49,7 +49,7 @@ branches:
     increment: Inherit
     regex: ^features?[\/-](?<BranchName>.+)
     source-branches:
-      - develop
+      - dev
       - main
       - release
       - support
@@ -60,7 +60,7 @@ branches:
     increment: Inherit
     regex: ^(pull-requests|pull|pr)[\/-](?<Number>\d+)
     source-branches:
-      - develop
+      - dev
       - main
       - release
       - feature
