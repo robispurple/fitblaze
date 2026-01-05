@@ -482,3 +482,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Don't save the local app db
+FitBlaze/fitblaze.db
