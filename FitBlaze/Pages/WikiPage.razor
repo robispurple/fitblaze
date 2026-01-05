@@ -1,0 +1,33 @@
+@page "/wiki/{slug}"
+@layout MainLayout
+
+<div class="wiki-container">
+    <div class="wiki-sidebar">
+        <PageList />
+    </div>
+    <div class="wiki-main">
+        <PageViewer Slug="slug" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? slug { get; set; }
+}
+
+<style>
+    .wiki-container {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 2rem;
+    }
+
+    .wiki-sidebar {
+        border-right: 1px solid #dee2e6;
+        padding-right: 1rem;
+    }
+
+    .wiki-main {
+        padding: 1rem 0;
+    }
+</style>

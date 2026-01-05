@@ -1,0 +1,96 @@
+@using FitBlaze.Features.Wiki.Models
+@using FitBlaze.Features.Wiki.Services
+@inject PageService PageService
+
+@if (breadcrumbs != null && breadcrumbs.Any())
+{
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="javascript:" @onclick="NavigateHome" @onclick:preventDefault>Home</a>
+            </li>
+            @foreach (var (item, isLast) in breadcrumbs.Select((p, i) => (p, i == breadcrumbs.Count - 1)))
+            {
+                @if (isLast)
+                {
+                    <li class="breadcrumb-item active" aria-current="page">
+                        @item.Title
+                    </li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item">
+                        <a href="javascript:" @onclick="@(() => NavigateTo(item.Slug))" @onclick:preventDefault>
+                            @item.Title
+                        </a>
+                    </li>
+                }
+            }
+        </ol>
+    </nav>
+}
+
+@code {
+    [Parameter]
+    public Guid? PageId { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnNavigate { get; set; }
+
+    private List<WikiPage>? breadcrumbs;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (PageId.HasValue)
+        {
+            await LoadBreadcrumbs();
+        }
+        else
+        {
+            breadcrumbs = null;
+        }
+    }
+
+    private async Task LoadBreadcrumbs()
+    {
+        breadcrumbs = new List<WikiPage>();
+
+        var currentId = PageId;
+        while (currentId.HasValue)
+        {
+            var page = await PageService.GetPageAsync(currentId.Value);
+            if (page == null) break;
+
+            breadcrumbs.Insert(0, page);
+            currentId = page.ParentId;
+        }
+    }
+
+    private void NavigateHome()
+    {
+        OnNavigate.InvokeAsync("/wiki");
+    }
+
+    private void NavigateTo(string slug)
+    {
+        OnNavigate.InvokeAsync($"/wiki/{slug}");
+    }
+}
+
+<style>
+    .breadcrumb {
+        margin-bottom: 1rem;
+        padding: 0.75rem 1rem;
+        background-color: #f8f9fa;
+        border-radius: 0.25rem;
+    }
+
+    .breadcrumb-item a {
+        color: #0d6efd;
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+</style>

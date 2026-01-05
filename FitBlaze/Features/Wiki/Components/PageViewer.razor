@@ -1,0 +1,193 @@
+@using FitBlaze.Features.Wiki.Models
+@using FitBlaze.Features.Wiki.Services
+@using Markdig
+@inject PageService PageService
+@inject NavigationManager Navigation
+
+<div class="page-viewer">
+    @if (isLoading)
+    {
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    }
+    else if (currentPage == null)
+    {
+        <div class="alert alert-warning" role="alert">
+            <h4 class="alert-heading">Page Not Found</h4>
+            <p>The page you're looking for doesn't exist.</p>
+            <hr>
+            <a href="/wiki" class="btn btn-primary">Back to Pages</a>
+        </div>
+    }
+    else
+    {
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1>@currentPage.Title</h1>
+                    <PageBreadcrumb PageId="currentPage.Id" OnNavigate="HandleNavigate" />
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-secondary" @onclick="EditPage">
+                        <span class="oi oi-pencil"></span> Edit
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" @onclick="DeletePage">
+                        <span class="oi oi-trash"></span> Delete
+                    </button>
+                </div>
+            </div>
+            <small class="text-muted">
+                Last modified: @currentPage.ModifiedDate.ToString("F")
+            </small>
+        </div>
+
+        <div class="page-content">
+            @((MarkupString)Markdown.ToHtml(currentPage.Content))
+        </div>
+
+        @if (!string.IsNullOrEmpty(currentPage.Tags))
+        {
+            <div class="page-tags">
+                <strong>Tags:</strong>
+                @foreach (var tag in currentPage.Tags.Split(','))
+                {
+                    <span class="badge bg-secondary">@tag.Trim()</span>
+                }
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string? Slug { get; set; }
+
+    private WikiPage? currentPage;
+    private bool isLoading = true;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(Slug))
+        {
+            await LoadPage();
+        }
+    }
+
+    private async Task LoadPage()
+    {
+        isLoading = true;
+        try
+        {
+            currentPage = await PageService.GetPageBySlugAsync(Slug!);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading page: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void EditPage()
+    {
+        if (currentPage != null)
+        {
+            Navigation.NavigateTo($"/wiki/{currentPage.Slug}/edit");
+        }
+    }
+
+    private async Task DeletePage()
+    {
+        if (currentPage != null && await ConfirmDelete())
+        {
+            try
+            {
+                await PageService.DeletePageAsync(currentPage.Id);
+                Navigation.NavigateTo("/wiki");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting page: {ex.Message}");
+            }
+        }
+    }
+
+    private Task<bool> ConfirmDelete()
+    {
+        // In production, implement JS interop for confirm dialog
+        // For now, just return true to demonstrate delete functionality
+        return Task.FromResult(true);
+    }
+
+    private void HandleNavigate(string path)
+    {
+        Navigation.NavigateTo(path);
+    }
+}
+
+<style>
+    .page-viewer {
+        padding: 1rem 0;
+    }
+
+    .page-header {
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        margin-bottom: 0.5rem;
+    }
+
+    .page-content {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #212529;
+    }
+
+    .page-content :deep h2 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-content :deep h3 {
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-content :deep p {
+        margin-bottom: 1rem;
+    }
+
+    .page-content :deep code {
+        background-color: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-family: monospace;
+    }
+
+    .page-content :deep pre {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        overflow-x: auto;
+    }
+
+    .page-tags {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .page-tags .badge {
+        margin-right: 0.5rem;
+    }
+
+    .btn-group {
+        margin-bottom: 0.5rem;
+    }
+</style>

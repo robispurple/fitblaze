@@ -1,0 +1,90 @@
+@using FitBlaze.Features.Wiki.Models
+@using FitBlaze.Features.Wiki.Services
+@inject PageService PageService
+@inject NavigationManager Navigation
+
+<div class="page-list">
+    <div class="page-list-header">
+        <h3>Pages</h3>
+        <button class="btn btn-primary btn-sm" @onclick="CreateNewPage">
+            <span class="oi oi-plus"></span> New Page
+        </button>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="spinner-border spinner-border-sm" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    }
+    else if (pages == null || !pages.Any())
+    {
+        <p class="text-muted">No pages yet. <a href="#" @onclick:preventDefault @onclick="CreateNewPage">Create one</a></p>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var page in pages.Where(p => p.ParentId == null))
+            {
+                <PageListItem Page="page" AllPages="pages" OnNavigate="NavigateToPage" />
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private IEnumerable<WikiPage>? pages;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPages();
+    }
+
+    private async Task LoadPages()
+    {
+        isLoading = true;
+        try
+        {
+            pages = await PageService.GetAllPagesAsync(1, 500);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading pages: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void CreateNewPage()
+    {
+        Navigation.NavigateTo("/wiki/new");
+    }
+
+    private void NavigateToPage(string slug)
+    {
+        Navigation.NavigateTo($"/wiki/{slug}");
+    }
+}
+
+<style>
+    .page-list {
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        padding: 0.75rem;
+    }
+
+    .page-list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .page-list-header h3 {
+        margin: 0;
+        font-size: 1.25rem;
+    }
+</style>

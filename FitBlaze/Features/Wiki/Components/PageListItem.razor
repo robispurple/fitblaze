@@ -1,0 +1,83 @@
+@using FitBlaze.Features.Wiki.Models
+
+<div class="page-list-item">
+    <button class="list-group-item list-group-item-action" @onclick="ToggleExpand" style="text-align: left;">
+        @if (HasChildren)
+        {
+            <span class="oi @(isExpanded ? "oi-chevron-bottom" : "oi-chevron-right")" style="margin-right: 0.5rem;"></span>
+        }
+        <span class="page-title">@Page.Title</span>
+    </button>
+
+    @if (isExpanded && HasChildren)
+    {
+        <div class="page-list-children">
+            @foreach (var child in GetChildren())
+            {
+                <PageListItem Page="child" AllPages="AllPages" OnNavigate="OnNavigate" />
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public required WikiPage Page { get; set; }
+
+    [Parameter]
+    public required IEnumerable<WikiPage> AllPages { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnNavigate { get; set; }
+
+    private bool isExpanded = false;
+
+    private bool HasChildren => AllPages.Any(p => p.ParentId == Page.Id);
+
+    private void ToggleExpand()
+    {
+        if (HasChildren)
+        {
+            isExpanded = !isExpanded;
+        }
+        else
+        {
+            OnNavigate.InvokeAsync(Page.Slug);
+        }
+    }
+
+    private IEnumerable<WikiPage> GetChildren()
+    {
+        return AllPages.Where(p => p.ParentId == Page.Id).OrderBy(p => p.Title);
+    }
+}
+
+<style>
+    .page-list-item {
+        margin-bottom: 0.25rem;
+    }
+
+    .list-group-item {
+        border: none;
+        border-left: 3px solid transparent;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+        border-left-color: #0d6efd;
+    }
+
+    .page-list-children {
+        padding-left: 1.5rem;
+        border-left: 1px solid #dee2e6;
+    }
+
+    .page-title {
+        font-weight: 500;
+    }
+
+    .oi {
+        display: inline-block;
+    }
+</style>

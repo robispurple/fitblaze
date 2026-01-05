@@ -1,0 +1,66 @@
+@using Bunit
+@using FitBlaze.Features.Wiki.Models
+@using FitBlaze.Features.Wiki.Services
+@using Moq
+
+@code {
+    [Fact]
+    public void PageList_DisplaysNoPages_WhenNoPages()
+    {
+        // Arrange
+        var ctx = new TestContext();
+        var mockPageService = new Mock<PageService>(MockBehavior.Loose, It.IsAny<IPageRepository>(), It.IsAny<SlugService>(), It.IsAny<ILogger<PageService>>());
+        mockPageService.Setup(s => s.GetAllPagesAsync(It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync(new List<WikiPage>());
+
+        ctx.Services.AddScoped(_ => mockPageService.Object);
+        ctx.Services.AddScoped(_ => new NavigationManager());
+
+        // Act
+        var cut = ctx.RenderComponent<PageList>();
+
+        // Assert
+        cut.Markup.Should().Contain("No pages yet");
+    }
+
+    [Fact]
+    public void PageList_DisplaysPages_WhenPagesExist()
+    {
+        // Arrange
+        var ctx = new TestContext();
+        var pages = new List<WikiPage>
+        {
+            new() { Id = Guid.NewGuid(), Title = "Home", Slug = "home", ParentId = null }
+        };
+
+        var mockPageService = new Mock<PageService>(MockBehavior.Loose, It.IsAny<IPageRepository>(), It.IsAny<SlugService>(), It.IsAny<ILogger<PageService>>());
+        mockPageService.Setup(s => s.GetAllPagesAsync(It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync(pages);
+
+        ctx.Services.AddScoped(_ => mockPageService.Object);
+
+        // Act
+        var cut = ctx.RenderComponent<PageList>();
+
+        // Assert
+        cut.Markup.Should().Contain("Home");
+    }
+
+    [Fact]
+    public void PageList_HasNewPageButton()
+    {
+        // Arrange
+        var ctx = new TestContext();
+        var mockPageService = new Mock<PageService>(MockBehavior.Loose, It.IsAny<IPageRepository>(), It.IsAny<SlugService>(), It.IsAny<ILogger<PageService>>());
+        mockPageService.Setup(s => s.GetAllPagesAsync(It.IsAny<int>(), It.IsAny<int>()))
+            .ReturnsAsync(new List<WikiPage>());
+
+        ctx.Services.AddScoped(_ => mockPageService.Object);
+
+        // Act
+        var cut = ctx.RenderComponent<PageList>();
+
+        // Assert
+        cut.Markup.Should().Contain("New Page");
+    }
+}
