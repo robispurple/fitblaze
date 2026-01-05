@@ -3,6 +3,17 @@
 @using FitBlaze.Features.Wiki.Services
 @using Moq
 
+@*
+    PageList Component Tests
+    
+    Tests for the PageList component covering:
+    - No pages scenario: Verifies "No pages yet" message is displayed
+    - Pages exist scenario: Verifies pages are rendered in the list
+    - New Page button: Verifies the button is present and accessible
+    
+    Uses Bunit for component testing and Moq for mocking PageService dependencies.
+*@
+
 @code {
     [Fact]
     public void PageList_DisplaysNoPages_WhenNoPages()

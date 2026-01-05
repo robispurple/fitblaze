@@ -1,5 +1,19 @@
 @using FitBlaze.Features.Wiki.Models
 @using FitBlaze.Features.Wiki.Services
+
+@* 
+    PageList Component
+    
+    Displays a hierarchical tree view of all wiki pages with the ability to:
+    - View all pages in a nested tree structure (root pages with children)
+    - Expand/collapse tree nodes to show child pages
+    - Navigate to a page by clicking on it
+    - Create a new page via the "New Page" button
+    
+    This component loads all pages on initialization and renders them recursively
+    using PageListItem components.
+*@
+
 @inject PageService PageService
 @inject NavigationManager Navigation
 

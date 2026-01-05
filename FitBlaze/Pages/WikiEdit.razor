@@ -1,6 +1,19 @@
 @page "/wiki/{slug}/edit"
 @layout MainLayout
 
+@*
+    Wiki Page Edit
+    
+    Provides the interface for editing an existing wiki page.
+    
+    Route: /wiki/{slug}/edit
+    - slug: URL-friendly identifier of the page to edit
+    
+    Layout:
+    - Left sidebar: Hierarchical page list (PageList component)
+    - Main content: Page editor (PageEditor component) in edit mode
+*@
+
 <div class="wiki-container">
     <div class="wiki-sidebar">
         <PageList />

@@ -1,6 +1,25 @@
 @using FitBlaze.Features.Wiki.Models
 @using FitBlaze.Features.Wiki.Services
 @using Markdig
+
+@*
+    PageEditor Component
+    
+    Provides create/edit functionality for wiki pages with the following features:
+    - Title field (required)
+    - Slug field with auto-generation from title
+    - Parent page selector (for hierarchical organization)
+    - Tags input (comma-separated)
+    - Markdown content textarea with live preview toggle
+    - Save/Cancel buttons
+    - Unsaved changes warning
+    - Two-column layout with editor on left and preview on right
+    - Detects whether component is in create or edit mode
+    
+    Parameters:
+    - Slug: The slug of the page to edit (optional; if null, creates new page)
+*@
+
 @inject PageService PageService
 @inject NavigationManager Navigation
 

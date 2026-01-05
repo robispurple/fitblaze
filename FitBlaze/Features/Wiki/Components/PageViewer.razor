@@ -1,6 +1,23 @@
 @using FitBlaze.Features.Wiki.Models
 @using FitBlaze.Features.Wiki.Services
 @using Markdig
+
+@*
+    PageViewer Component
+    
+    Displays the content of a wiki page in a read-only view with the following features:
+    - Renders Markdown content as HTML using Markdig
+    - Shows page title and breadcrumb navigation hierarchy
+    - Displays last modified date
+    - Provides Edit and Delete action buttons
+    - Handles 404 (page not found) gracefully
+    - Renders tags as badges
+    - Includes loading spinner during page fetch
+    
+    Parameters:
+    - Slug: The URL-friendly slug of the page to display
+*@
+
 @inject PageService PageService
 @inject NavigationManager Navigation
 

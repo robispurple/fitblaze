@@ -8,6 +8,18 @@ using Microsoft.Extensions.Logging;
 
 namespace FitBlaze.Tests.Features.Wiki.Services;
 
+/// <summary>
+/// Tests for PageService
+/// 
+/// Covers core page operations:
+/// - CreatePageAsync: Creates new pages with auto-generated slugs, verifies repository is called
+/// - GetPageBySlugAsync: Retrieves pages by slug
+/// - UpdatePageAsync: Updates existing pages, throws if page not found
+/// - DeletePageAsync: Deletes pages, verifies repository is called
+/// - SearchPagesAsync: Searches pages with pagination support
+/// 
+/// Uses mock repository to isolate business logic testing.
+/// </summary>
 public class PageServiceTest
 {
     private Mock<IPageRepository> CreateMockRepository()

@@ -6,6 +6,19 @@ using FluentAssertions;
 
 namespace FitBlaze.Tests.Features.Wiki.Services;
 
+/// <summary>
+/// Tests for SlugService
+/// 
+/// Covers slug generation and collision detection:
+/// - GenerateSlug: Converts titles to URL-friendly slugs
+///   - Lowercases text, converts spaces to hyphens
+///   - Removes special characters
+///   - Trims excessive length (max 100 chars)
+///   - Handles multiple consecutive spaces
+/// - GenerateUniqueSlugAsync: Ensures generated slugs are unique
+///   - Returns base slug if no collision
+///   - Appends numeric suffix (-2, -3, etc.) on collision
+/// </summary>
 public class SlugServiceTest
 {
     [Theory]

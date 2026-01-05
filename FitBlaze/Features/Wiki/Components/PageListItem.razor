@@ -1,5 +1,23 @@
 @using FitBlaze.Features.Wiki.Models
 
+@*
+    PageListItem Component
+    
+    Recursive component for rendering individual wiki pages in a tree structure.
+    
+    Features:
+    - Displays a page as a clickable list item
+    - Shows a chevron icon that can be expanded if the page has children
+    - Recursively renders child pages when expanded
+    - Navigates to the page when clicked (if no children)
+    - Expands/collapses to show/hide child pages
+    
+    Parameters:
+    - Page: The WikiPage to render
+    - AllPages: Complete list of all pages (to find children)
+    - OnNavigate: Event callback for navigation requests
+*@
+
 <div class="page-list-item">
     <button class="list-group-item list-group-item-action" @onclick="ToggleExpand" style="text-align: left;">
         @if (HasChildren)

@@ -1,6 +1,18 @@
 @page "/wiki/new"
 @layout MainLayout
 
+@*
+    Wiki Page Create
+    
+    Provides the interface for creating a new wiki page.
+    
+    Route: /wiki/new
+    
+    Layout:
+    - Left sidebar: Hierarchical page list (PageList component)
+    - Main content: Page editor (PageEditor component) in create mode
+*@
+
 <div class="wiki-container">
     <div class="wiki-sidebar">
         <PageList />

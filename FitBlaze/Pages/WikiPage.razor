@@ -1,6 +1,19 @@
 @page "/wiki/{slug}"
 @layout MainLayout
 
+@*
+    Wiki Page Display
+    
+    Displays a specific wiki page based on the slug parameter.
+    
+    Route: /wiki/{slug}
+    - slug: URL-friendly identifier of the page to display
+    
+    Layout:
+    - Left sidebar: Hierarchical page list (PageList component)
+    - Main content: Page viewer (PageViewer component) showing the page content
+*@
+
 <div class="wiki-container">
     <div class="wiki-sidebar">
         <PageList />

@@ -1,5 +1,24 @@
 @using FitBlaze.Features.Wiki.Models
 @using FitBlaze.Features.Wiki.Services
+
+@*
+    PageBreadcrumb Component
+    
+    Displays the page hierarchy as a breadcrumb navigation trail.
+    
+    Features:
+    - Shows "Home" as the root/first item
+    - Renders parent pages in hierarchy order leading to the current page
+    - Makes all items except the current page clickable
+    - Highlights current page as active (not clickable)
+    - Only displays if a page hierarchy exists
+    - Styled with Bootstrap breadcrumb component
+    
+    Parameters:
+    - PageId: The ID of the current page to load and display breadcrumbs for
+    - OnNavigate: Event callback fired when a breadcrumb link is clicked
+*@
+
 @inject PageService PageService
 
 @if (breadcrumbs != null && breadcrumbs.Any())

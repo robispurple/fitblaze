@@ -1,6 +1,19 @@
 @page "/wiki"
 @layout MainLayout
 
+@*
+    Wiki Index Page
+    
+    The main wiki page that displays the wiki interface with a sidebar containing
+    the page list and a main content area with a welcome message.
+    
+    Route: /wiki
+    
+    Layout:
+    - Left sidebar: Hierarchical page list (PageList component)
+    - Main content: Welcome message and instructions for new users
+*@
+
 <div class="wiki-container">
     <div class="wiki-sidebar">
         <PageList />
