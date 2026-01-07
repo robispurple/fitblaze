@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore; // Added
 using FitBlaze.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+// Added: Configure DbContext
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<PageService>();
+builder.Services.AddControllers(); // Added for API controllers
 
 var app = builder.Build();
 
@@ -25,6 +31,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.MapControllers(); // Added for API controllers
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
