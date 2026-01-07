@@ -100,7 +100,7 @@ namespace FitBlaze.Tests.Features.Wiki.Pages
 
             var cut = Render<PageEditor>();
             cut.Find("#title").Change("Existing Page"); // Generates 'existing-page'
-            
+
             cut.Find("form").Submit();
 
             cut.Markup.Should().Contain("The slug 'existing-page' is already in use");
