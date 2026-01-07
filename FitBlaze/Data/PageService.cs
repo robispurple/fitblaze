@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using FitBlaze.Models;
+using FitBlaze.Features.Wiki.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

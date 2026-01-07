@@ -1,7 +1,7 @@
 using Bunit;
 using FitBlaze.Data;
 using FitBlaze.Features.Wiki.Pages;
-using FitBlaze.Models;
+using FitBlaze.Features.Wiki.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Data.Sqlite;
