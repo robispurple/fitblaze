@@ -80,6 +80,32 @@ namespace FitBlaze.Tests.Features.Wiki.Pages
             cut.Find("#content").GetAttribute("value").Should().Be("Old Content");
         }
 
+        [Fact]
+        public void ShowsErrorForReservedSlug()
+        {
+            var cut = Render<PageEditor>();
+            cut.Find("#title").Change("Create"); // Should gen slug "create"
+            cut.Find("#slug").GetAttribute("value").Should().Be("create");
+
+            cut.Find("form").Submit();
+
+            cut.Markup.Should().Contain("The slug 'create' is reserved");
+        }
+
+        [Fact]
+        public async Task ShowsErrorForDuplicateSlug()
+        {
+            await _pageService.AddPageAsync(new Page { Title = "Existing Page", Content = "Content" });
+            // Slug is 'existing-page'
+
+            var cut = Render<PageEditor>();
+            cut.Find("#title").Change("Existing Page"); // Generates 'existing-page'
+            
+            cut.Find("form").Submit();
+
+            cut.Markup.Should().Contain("The slug 'existing-page' is already in use");
+        }
+
         public new void Dispose()
         {
             _dbContext.Dispose();

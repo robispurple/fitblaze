@@ -76,5 +76,15 @@ namespace FitBlaze.Data
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> IsSlugUniqueAsync(string slug, int? excludeId = null)
+        {
+            var query = _context.Pages.AsQueryable();
+            if (excludeId.HasValue)
+            {
+                query = query.Where(p => p.Id != excludeId.Value);
+            }
+            return !await query.AnyAsync(p => p.Slug == slug);
+        }
     }
 }

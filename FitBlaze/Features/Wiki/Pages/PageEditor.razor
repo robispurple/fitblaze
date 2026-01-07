@@ -10,6 +10,10 @@
     <EditForm Model="@PageModel" OnValidSubmit="HandleValidSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
         <NavigationLock ConfirmExternalNavigation="@(IsDirty)" />
 
         <div class="mb-3">
@@ -68,6 +72,7 @@
     private bool IsNew => string.IsNullOrEmpty(Slug);
     private bool ShowPreview { get; set; } = true;
     private bool IsDirty { get; set; } = false;
+    private string? errorMessage;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -131,6 +136,20 @@
 
     private async Task HandleValidSubmit()
     {
+        errorMessage = null;
+        var reservedSlugs = new[] { "create", "edit" };
+        if (reservedSlugs.Contains(PageModel.Slug.ToLowerInvariant()))
+        {
+            errorMessage = $"The slug '{PageModel.Slug}' is reserved and cannot be used.";
+            return;
+        }
+
+        if (!await PageService.IsSlugUniqueAsync(PageModel.Slug, IsNew ? null : PageModel.Id))
+        {
+            errorMessage = $"The slug '{PageModel.Slug}' is already in use.";
+            return;
+        }
+
         if (IsNew)
         {
             await PageService.AddPageAsync(PageModel);
