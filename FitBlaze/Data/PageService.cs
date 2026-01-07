@@ -24,8 +24,18 @@ namespace FitBlaze.Data
             return await _context.Pages.FindAsync(id);
         }
 
+        public async Task<Page?> GetPageBySlugAsync(string slug)
+        {
+            return await _context.Pages.FirstOrDefaultAsync(p => p.Slug == slug);
+        }
+
         public async Task<Page> AddPageAsync(Page newPage)
         {
+            if (string.IsNullOrEmpty(newPage.Slug))
+            {
+                newPage.Slug = GenerateSlug(newPage.Title);
+            }
+            newPage.LastModified = DateTime.UtcNow;
             _context.Pages.Add(newPage);
             await _context.SaveChangesAsync();
             return newPage;
@@ -42,9 +52,16 @@ namespace FitBlaze.Data
 
             existingPage.Title = updatedPage.Title;
             existingPage.Content = updatedPage.Content;
+            existingPage.Slug = string.IsNullOrEmpty(updatedPage.Slug) ? GenerateSlug(updatedPage.Title) : updatedPage.Slug;
+            existingPage.LastModified = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
             return existingPage;
+        }
+
+        private string GenerateSlug(string title)
+        {
+            return title.ToLowerInvariant().Replace(" ", "-").Replace("/", "-"); // Simple slug generation
         }
 
         public async Task<bool> DeletePageAsync(int id)
