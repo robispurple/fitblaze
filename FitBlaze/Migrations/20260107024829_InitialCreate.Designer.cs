@@ -19,7 +19,7 @@ namespace FitBlaze.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
 
-            modelBuilder.Entity("FitBlaze.Models.Page", b =>
+            modelBuilder.Entity("FitBlaze.Features.Wiki.Models.Page", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

@@ -1,4 +1,4 @@
-namespace FitBlaze.Models
+namespace FitBlaze.Features.Wiki.Models
 {
     public class Page
     {

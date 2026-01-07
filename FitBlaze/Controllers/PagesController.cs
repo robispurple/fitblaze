@@ -1,5 +1,5 @@
 using FitBlaze.Data;
-using FitBlaze.Models;
+using FitBlaze.Features.Wiki.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
