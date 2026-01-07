@@ -57,12 +57,14 @@ bd list --overdue               # Due date in past (not closed)
 
 1. **Check for ready work**: Run `bd ready` to see what's unblocked
 2. **Claim your task**: `bd update <id> --status in_progress`
-3. **Work on it**: Implement, test, document the task in a dedicated branch
-4. **Discover new work**: If you find bugs or TODOs, create issues:
+3. **Check out a new branch**: name the branch appropriately for the task and issue type
+4. **Start watching the app**: `dotnet watch run --project .\FitBlaze\FitBlaze.csproj`
+5. **Work on it**: Implement, test, document the task in the dedicated branch
+6. **Discover new work**: If you find bugs or TODOs, create issues:
    - `bd create "Found bug in auth" -t bug -p 1 --json`
    - Link it: `bd dep add <new-id> <current-id> --type discovered-from`
-5. **Complete**: `bd close <id> --reason "Implemented"`
-6. **Export**: Run `bd export -o .beads/issues.jsonl` before committing
+7. **Complete**: `bd close <id> --reason "Implemented"`
+8. **Export**: Run `bd export -o .beads/issues.jsonl` before committing
 
 ### Issue Types
 
