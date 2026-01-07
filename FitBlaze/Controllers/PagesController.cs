@@ -40,20 +40,45 @@ namespace FitBlaze.Controllers
 
         // POST: api/Pages
         [HttpPost]
-        public async Task<ActionResult<Page>> PostPage(Page page)
+        public async Task<ActionResult<Page>> PostPage(CreatePageRequest request)
         {
+            if (string.IsNullOrWhiteSpace(request.Content))
+            {
+                return BadRequest("Content is required.");
+            }
+
+            var page = new Page
+            {
+                Title = request.Title,
+                Content = request.Content,
+                Slug = request.Slug
+            };
+
             var createdPage = await _pageService.AddPageAsync(page);
             return CreatedAtAction(nameof(GetPage), new { id = createdPage.Id }, createdPage);
         }
 
         // PUT: api/Pages/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPage(int id, Page page)
+        public async Task<IActionResult> PutPage(int id, UpdatePageRequest request)
         {
-            if (id != page.Id)
+            if (id != request.Id)
             {
-                return BadRequest();
+                return BadRequest("ID mismatch");
             }
+
+            if (string.IsNullOrWhiteSpace(request.Content))
+            {
+                return BadRequest("Content is required.");
+            }
+
+            var page = new Page
+            {
+                Id = request.Id,
+                Title = request.Title,
+                Content = request.Content,
+                Slug = request.Slug
+            };
 
             var updatedPage = await _pageService.UpdatePageAsync(page);
 
