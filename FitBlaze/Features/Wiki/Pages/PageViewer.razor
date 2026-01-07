@@ -1,0 +1,75 @@
+@page "/wiki/{Slug}"
+@inject PageService PageService
+@inject NavigationManager NavigationManager
+
+<div class="wiki-page">
+    @if (wikiPage == null)
+    {
+        @if (isLoading)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <div class="alert alert-danger">
+                <h4>404 - Page Not Found</h4>
+                <p>The page you are looking for does not exist.</p>
+                <a href="/wiki/create" class="btn btn-primary">Create this page?</a>
+            </div>
+        }
+    }
+    else
+    {
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/wiki">Wiki</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@wikiPage.Title</li>
+            </ol>
+        </nav>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1>@wikiPage.Title</h1>
+            <div>
+                <a href="/wiki/edit/@wikiPage.Slug" class="btn btn-outline-primary btn-sm">Edit</a>
+                <button class="btn btn-outline-danger btn-sm" @onclick="DeletePage">Delete</button>
+            </div>
+        </div>
+
+        <div class="text-muted mb-4">
+            Last modified: @wikiPage.LastModified.ToString("g")
+        </div>
+
+        <div class="wiki-content">
+            @((MarkupString)Markdown.ToHtml(wikiPage.Content))
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Slug { get; set; } = string.Empty;
+
+    private Page? wikiPage;
+    private bool isLoading = true;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        isLoading = true;
+        wikiPage = await PageService.GetPageBySlugAsync(Slug);
+        isLoading = false;
+    }
+
+    private async Task DeletePage()
+    {
+        if (wikiPage != null)
+        {
+            // Note: In a real app, show a confirmation dialog first
+            var result = await PageService.DeletePageAsync(wikiPage.Id);
+            if (result)
+            {
+                NavigationManager.NavigateTo("/wiki");
+            }
+        }
+    }
+}
