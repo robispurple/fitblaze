@@ -1,0 +1,158 @@
+@page "/wiki/create"
+@page "/wiki/edit/{Slug}"
+@inject PageService PageService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<div class="container-fluid">
+    <h3>@(IsNew ? "Create Page" : $"Edit Page: {PageModel.Title}")</h3>
+
+    <EditForm Model="@PageModel" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <NavigationLock ConfirmExternalNavigation="@(IsDirty)" />
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <InputText id="title" class="form-control" @bind-Value="PageModel.Title" @bind-Value:after="OnTitleChanged" />
+        </div>
+
+        <div class="mb-3">
+            <label for="slug" class="form-label">Slug</label>
+            <div class="input-group">
+                <span class="input-group-text">/wiki/</span>
+                <InputText id="slug" class="form-control" @bind-Value="PageModel.Slug" />
+            </div>
+            <small class="text-muted">Preview: /wiki/@(string.IsNullOrEmpty(PageModel.Slug) ? "..." : PageModel.Slug)</small>
+        </div>
+
+        <!-- TODO: Add Parent Dropdown and Tags Input when supported by model -->
+
+        <div class="mb-3 form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="livePreviewToggle" @bind="ShowPreview">
+            <label class="form-check-label" for="livePreviewToggle">Live Preview</label>
+        </div>
+
+        <div class="row h-100">
+            <div class="@(ShowPreview ? "col-md-6" : "col-md-12")">
+                <div class="mb-3 h-100 d-flex flex-column">
+                    <label for="content" class="form-label">Content (Markdown)</label>
+                    <InputTextArea id="content" class="form-control flex-grow-1" style="min-height: 400px; font-family: monospace;" @bind-Value="PageModel.Content" @oninput="OnContentChanged" />
+                </div>
+            </div>
+            @if (ShowPreview)
+            {
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">Preview</div>
+                        <div class="card-body wiki-content overflow-auto" style="max-height: 450px;">
+                            @((MarkupString)Markdown.ToHtml(PageModel.Content ?? ""))
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter]
+    public string? Slug { get; set; }
+
+    private Page PageModel { get; set; } = new();
+    private bool IsNew => string.IsNullOrEmpty(Slug);
+    private bool ShowPreview { get; set; } = true;
+    private bool IsDirty { get; set; } = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!IsNew)
+        {
+            var page = await PageService.GetPageBySlugAsync(Slug!);
+            if (page != null)
+            {
+                // Clone the page to avoid modifying the tracked entity directly
+                PageModel = new Page
+                {
+                    Id = page.Id,
+                    Title = page.Title,
+                    Slug = page.Slug,
+                    Content = page.Content,
+                    LastModified = page.LastModified
+                };
+            }
+            else
+            {
+                // Page not found, redirect to create or list
+                NavigationManager.NavigateTo("/wiki");
+            }
+        }
+        else
+        {
+            // Reset for new page if navigating from edit to create
+            PageModel = new Page();
+        }
+    }
+
+    private void OnTitleChanged()
+    {
+        IsDirty = true;
+        if (IsNew && string.IsNullOrEmpty(PageModel.Slug))
+        {
+            PageModel.Slug = GenerateSlug(PageModel.Title);
+        }
+        else if (IsNew)
+        {
+             // Optional: Update slug if it matches the old title slug? 
+             // For now, only auto-generate if empty to avoid overriding user manual input.
+        }
+    }
+
+    private void OnContentChanged(ChangeEventArgs e)
+    {
+        IsDirty = true;
+    }
+
+    private string GenerateSlug(string title)
+    {
+        if (string.IsNullOrWhiteSpace(title)) return "";
+        return title.ToLowerInvariant()
+            .Replace(" ", "-")
+            .Replace("/", "-")
+            .Replace("?", "")
+            .Replace("&", "")
+            .Replace(":", "");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (IsNew)
+        {
+            await PageService.AddPageAsync(PageModel);
+        }
+        else
+        {
+            await PageService.UpdatePageAsync(PageModel);
+        }
+        IsDirty = false;
+        NavigationManager.NavigateTo($"/wiki/{PageModel.Slug}");
+    }
+
+    private void Cancel()
+    {
+        IsDirty = false;
+        if (IsNew)
+        {
+            NavigationManager.NavigateTo("/wiki");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/wiki/{Slug}");
+        }
+    }
+}
