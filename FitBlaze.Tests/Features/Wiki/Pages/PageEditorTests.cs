@@ -10,7 +10,7 @@ using Xunit;
 
 namespace FitBlaze.Tests.Features.Wiki.Pages
 {
-    public class PageEditorTests : TestContext, IDisposable
+    public class PageEditorTests : BunitContext, IDisposable
     {
         private readonly SqliteConnection _connection;
         private readonly ApplicationDbContext _dbContext;
