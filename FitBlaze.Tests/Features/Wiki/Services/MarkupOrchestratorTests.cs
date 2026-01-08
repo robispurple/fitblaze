@@ -50,11 +50,11 @@ namespace FitBlaze.Tests.Features.Wiki.Services
             // Assert
             Assert.Equal("Fallback Rendered", result);
         }
-        
+
         [Fact]
         public void Render_ShouldReturnOriginalContent_WhenNoEnginesAvailable()
         {
-             // Arrange
+            // Arrange
             var engines = Enumerable.Empty<IMarkupEngine>();
             var orchestrator = new MarkupOrchestrator(engines);
 

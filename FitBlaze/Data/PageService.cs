@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using FitBlaze.Features.Wiki.Models;
+using FitBlaze.Features.Wiki.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -33,11 +34,21 @@ namespace FitBlaze.Data
         {
             if (string.IsNullOrEmpty(newPage.Slug))
             {
-                newPage.Slug = GenerateSlug(newPage.Title);
+                newPage.Slug = SlugGenerator.Generate(newPage.Title);
             }
+
             newPage.LastModified = DateTime.UtcNow;
             _context.Pages.Add(newPage);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
+            {
+                throw new DuplicateSlugException(newPage.Slug, ex);
+            }
+
             return newPage;
         }
 
@@ -52,16 +63,26 @@ namespace FitBlaze.Data
 
             existingPage.Title = updatedPage.Title;
             existingPage.Content = updatedPage.Content;
-            existingPage.Slug = string.IsNullOrEmpty(updatedPage.Slug) ? GenerateSlug(updatedPage.Title) : updatedPage.Slug;
+            existingPage.Slug = string.IsNullOrEmpty(updatedPage.Slug) ? SlugGenerator.Generate(updatedPage.Title) : updatedPage.Slug;
             existingPage.LastModified = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
+            {
+                throw new DuplicateSlugException(existingPage.Slug, ex);
+            }
+
             return existingPage;
         }
 
-        private string GenerateSlug(string title)
+        private bool IsUniqueConstraintViolation(DbUpdateException ex)
         {
-            return title.ToLowerInvariant().Replace(" ", "-").Replace("/", "-"); // Simple slug generation
+            // For SQLite, the error message/code for unique constraint is usually related to "UNIQUE constraint failed"
+            // We can check the inner exception.
+            return ex.InnerException?.Message?.Contains("UNIQUE constraint failed") ?? false;
         }
 
         public async Task<bool> DeletePageAsync(int id)

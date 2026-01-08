@@ -41,8 +41,8 @@ namespace FitBlaze.Tests.Features.Wiki.Pages
 
             // Also mock Legacy to avoid issues if needed, though Orchestrator handles missing ones gracefully?
             // Actually Orchestrator constructor just takes the list.
-            
-            var orchestrator = new MarkupOrchestrator(new [] { engineMock.Object });
+
+            var orchestrator = new MarkupOrchestrator(new[] { engineMock.Object });
             Services.AddSingleton(orchestrator);
         }
 
