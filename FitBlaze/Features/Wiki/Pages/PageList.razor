@@ -1,0 +1,47 @@
+@page "/wiki"
+@inject PageService PageService
+
+<div class="wiki-index">
+    <!-- TODO: Implement Tree View when ParentId is available (bd-h4m) -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Wiki Pages</h1>
+        <a href="/wiki/create" class="btn btn-primary">Create New Page</a>
+    </div>
+
+    @if (pages == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else if (!pages.Any())
+    {
+        <div class="alert alert-info">
+            No wiki pages found. <a href="/wiki/create">Create the first one!</a>
+        </div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var p in pages)
+            {
+                <a href="/wiki/@p.Slug" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">@p.Title</h5>
+                        <small>Last modified: @p.LastModified.ToString("d")</small>
+                    </div>
+                    <p class="mb-1 text-truncate" style="max-width: 500px;">
+                        @p.Content
+                    </p>
+                </a>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<Page>? pages;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pages = await PageService.GetPagesAsync();
+    }
+}

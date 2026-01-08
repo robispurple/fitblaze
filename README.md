@@ -6,8 +6,14 @@ A modern Blazor-based successor to FitNesse, powered by FitSharp for acceptance 
 
 FitBlaze reimagines the classic FitNesse testing platform with a contemporary Blazor UI and ASP.NET Core backend. It maintains full compatibility with FitSharp test fixtures while providing a cleaner, more intuitive user experience for managing acceptance tests.
 
-## Features (Planned)
+## Features
 
+### Completed
+- **Version Display** — Application version shown in navigation bar
+- **Semantic Versioning** — Automatic version bumping via GitVersion based on git history and commit messages
+- **GitFlow Workflow** — Support for develop, main, release, feature, and hotfix branches
+
+### Planned
 - **Modern Wiki UI** — Blazor-based page editor and viewer with hierarchical navigation
 - **FitSharp Integration** — Execute acceptance tests directly from the browser
 - **Fixture Management** — Assembly loader and fixture discovery
@@ -25,9 +31,14 @@ This project is in early planning and development. See the [Roadmap](docs/ROADMA
 
 - .NET 10 or later
 - Visual Studio 2026 or Visual Studio Code
-- Git
+- git
+- bd (Beads) — issue tracking
+- gh (Github CLI) — GitHub integration
+- GitVersion.Tool — semantic versioning (`dotnet tool install --global GitVersion.Tool`)
 
-## Getting Started
+## Contributing
+
+Contributions are welcome. Please follow the code style guidelines in [AGENTS.md](AGENTS.md).
 
 ### Clone the repository
 ```bash
@@ -37,12 +48,12 @@ cd fitblaze
 
 ### Build
 ```bash
-dotnet build
+dotnet build .\FitBlaze.slnx
 ```
 
 ### Run (when code is ready)
 ```bash
-dotnet run
+dotnet run --project .\FitBlaze\FitBlaze.csproj
 ```
 
 ### Run tests (when tests are added)
@@ -50,43 +61,26 @@ dotnet run
 dotnet test
 ```
 
-## Project Structure
-
-```
-fitblaze/
-├── docs/               # Documentation
-│   └── ROADMAP.md     # Feature roadmap and epics
-├── FitBlaze/          # Main project (when created)
-├── AGENTS.md          # Build commands and code guidelines
-├── README.md          # This file
-└── LICENSE            # MIT License
-```
-
-## Documentation
-
-- **[Roadmap](docs/ROADMAP.md)** — Detailed epics, MVP scope, and feature breakdown
-- **[AGENTS.md](AGENTS.md)** — Build/test commands, architecture, and code style guidelines
-
-## Development
-
-### Commands
-
-| Command | Purpose |
-|---------|---------|
-| `dotnet build` | Build the project |
-| `dotnet build -c Release` | Build for release |
-| `dotnet run` | Run the application |
-| `dotnet test` | Run all tests |
-| `dotnet test --filter "FullyQualifiedName~TestName"` | Run a specific test |
-| `dotnet watch run` | Run with file watching |
-| `dotnet format` | Format code |
-| `dotnet clean` | Clean build artifacts |
-
 For more details, see [AGENTS.md](AGENTS.md).
 
-## Contributing
+### Version Management
 
-Contributions are welcome. Please follow the code style guidelines in [AGENTS.md](AGENTS.md).
+FitBlaze uses [GitVersion](https://gitversion.net/) for automated semantic versioning. The application version is displayed in the navigation bar.
+
+**Check current version:**
+```bash
+dotnet-gitversion
+```
+
+**Control version bumping with commit messages:**
+```bash
+git commit -m "feat: Add new feature" +semver: minor      # Bump minor version
+git commit -m "fix: Bug fix" +semver: patch               # Bump patch version
+git commit -m "BREAKING CHANGE: API redesign" +semver: major  # Bump major version
+git commit -m "docs: Update README" +semver: none         # No version bump
+```
+
+See [AGENTS.md](AGENTS.md) for detailed versioning workflow and release process.
 
 ## License
 
