@@ -10,7 +10,7 @@ using Xunit;
 
 namespace FitBlaze.Tests.Features.Wiki.Pages
 {
-    public class PageListTests : BunitContext, IDisposable
+    public class PageListTests : BunitContext, IAsyncLifetime
     {
         private readonly SqliteConnection _connection;
         private readonly ApplicationDbContext _dbContext;
@@ -60,12 +60,14 @@ namespace FitBlaze.Tests.Features.Wiki.Pages
             cut.Markup.Should().Contain("Page Two");
         }
 
-        public new void Dispose()
+        public Task InitializeAsync() => Task.CompletedTask;
+
+        public Task DisposeAsync()
         {
-            _dbContext.Dispose();
-            _connection.Close();
-            _connection.Dispose();
-            base.Dispose();
+            _dbContext?.Dispose();
+            _connection?.Close();
+            _connection?.Dispose();
+            return Task.CompletedTask;
         }
     }
 }

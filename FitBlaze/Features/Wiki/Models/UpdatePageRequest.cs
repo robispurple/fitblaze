@@ -4,7 +4,6 @@ namespace FitBlaze.Features.Wiki.Models
 {
     public class UpdatePageRequest
     {
-        [Required]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Title is required")]

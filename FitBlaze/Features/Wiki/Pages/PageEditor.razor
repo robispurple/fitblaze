@@ -3,6 +3,7 @@
 @inject PageService PageService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@using FitBlaze.Utilities
 
 <div class="container-fluid">
     <h3>@(IsNew ? "Create Page" : $"Edit Page: {PageModel.Title}")</h3>
@@ -50,7 +51,7 @@
                     <div class="card h-100">
                         <div class="card-header">Preview</div>
                         <div class="card-body wiki-content overflow-auto" style="max-height: 450px;">
-                            @((MarkupString)Markdown.ToHtml(PageModel.Content ?? ""))
+                            @((MarkupString)Markdown.ToHtml(PageModel.Content ?? "", _pipeline))
                         </div>
                     </div>
                 </div>
@@ -69,6 +70,7 @@
     public string? Slug { get; set; }
 
     private Page PageModel { get; set; } = new();
+    private MarkdownPipeline _pipeline = new MarkdownPipelineBuilder().DisableHtml().Build();
     private bool IsNew => string.IsNullOrEmpty(Slug);
     private bool ShowPreview { get; set; } = true;
     private bool IsDirty { get; set; } = false;
@@ -109,7 +111,7 @@
         IsDirty = true;
         if (IsNew && string.IsNullOrEmpty(PageModel.Slug))
         {
-            PageModel.Slug = GenerateSlug(PageModel.Title);
+            PageModel.Slug = SlugGenerator.Generate(PageModel.Title);
         }
         else if (IsNew)
         {
@@ -123,16 +125,7 @@
         IsDirty = true;
     }
 
-    private string GenerateSlug(string title)
-    {
-        if (string.IsNullOrWhiteSpace(title)) return "";
-        return title.ToLowerInvariant()
-            .Replace(" ", "-")
-            .Replace("/", "-")
-            .Replace("?", "")
-            .Replace("&", "")
-            .Replace(":", "");
-    }
+
 
     private async Task HandleValidSubmit()
     {

@@ -10,7 +10,7 @@ using Xunit;
 
 namespace FitBlaze.Tests.Features.Wiki.Pages
 {
-    public class PageEditorTests : BunitContext, IDisposable
+    public class PageEditorTests : BunitContext, IAsyncLifetime
     {
         private readonly SqliteConnection _connection;
         private readonly ApplicationDbContext _dbContext;
@@ -106,12 +106,14 @@ namespace FitBlaze.Tests.Features.Wiki.Pages
             cut.Markup.Should().Contain("The slug 'existing-page' is already in use");
         }
 
-        public new void Dispose()
+        public Task InitializeAsync() => Task.CompletedTask;
+
+        public Task DisposeAsync()
         {
             _dbContext.Dispose();
             _connection.Close();
             _connection.Dispose();
-            base.Dispose();
+            return Task.CompletedTask;
         }
     }
 }
