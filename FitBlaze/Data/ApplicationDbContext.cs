@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using FitBlaze.Models;
+using FitBlaze.Features.Wiki.Models;
 
 namespace FitBlaze.Data
 {
@@ -10,5 +10,14 @@ namespace FitBlaze.Data
         }
 
         public DbSet<Page> Pages { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Page>()
+                .HasIndex(p => p.Slug)
+                .IsUnique();
+        }
     }
 }
