@@ -125,8 +125,8 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
-      - name: Install Versionize
-        run: dotnet tool install --global Versionize
+      - name: Restore tools
+        run: dotnet tool restore
 
       - name: Get current version
         id: gitversion
@@ -141,7 +141,7 @@ jobs:
 
       - name: Generate changelog with Versionize
         run: |
-          versionize --skip-version
+          dotnet tool run versionize --skip-version
         continue-on-error: true
 
       - name: Commit and push changelog

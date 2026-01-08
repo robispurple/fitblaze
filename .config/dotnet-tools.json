@@ -8,6 +8,20 @@
         "husky"
       ],
       "rollForward": false
+    },
+    "gitversion.tool": {
+      "version": "6.5.1",
+      "commands": [
+        "dotnet-gitversion"
+      ],
+      "rollForward": false
+    },
+    "versionize": {
+      "version": "2.4.0",
+      "commands": [
+        "versionize"
+      ],
+      "rollForward": false
     }
   }
 }
