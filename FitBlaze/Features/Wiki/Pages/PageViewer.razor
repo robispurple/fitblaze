@@ -1,6 +1,7 @@
 @page "/wiki/{Slug}"
 @inject PageService PageService
 @inject NavigationManager NavigationManager
+@inject MarkupOrchestrator MarkupOrchestrator
 
 <div class="wiki-page">
     @if (wikiPage == null)
@@ -41,11 +42,12 @@
         </div>
 
         <div class="wiki-content">
-            @((MarkupString)Markdown.ToHtml(wikiPage.Content))
+            @((MarkupString)MarkupOrchestrator.Render(wikiPage.Content, wikiPage.MarkupType))
         </div>
     }
 </div>
 
+@using FitBlaze.Features.Wiki.Services
 @code {
     [Parameter]
     public string Slug { get; set; } = string.Empty;

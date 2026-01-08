@@ -3,6 +3,8 @@
 @inject PageService PageService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@using FitBlaze.Features.Wiki.Services
+@inject MarkupOrchestrator MarkupOrchestrator
 
 <div class="container-fluid">
     <h3>@(IsNew ? "Create Page" : $"Edit Page: {PageModel.Title}")</h3>
@@ -32,6 +34,16 @@
 
         <!-- TODO: Add Parent Dropdown and Tags Input when supported by model -->
 
+        <div class="mb-3">
+            <label for="markupType" class="form-label">Markup Type</label>
+            <InputSelect id="markupType" class="form-select" @bind-Value="PageModel.MarkupType">
+                @foreach (var type in Enum.GetValues(typeof(MarkupType)))
+                {
+                    <option value="@type">@type</option>
+                }
+            </InputSelect>
+        </div>
+
         <div class="mb-3 form-check form-switch">
             <input class="form-check-input" type="checkbox" id="livePreviewToggle" @bind="ShowPreview">
             <label class="form-check-label" for="livePreviewToggle">Live Preview</label>
@@ -50,7 +62,7 @@
                     <div class="card h-100">
                         <div class="card-header">Preview</div>
                         <div class="card-body wiki-content overflow-auto" style="max-height: 450px;">
-                            @((MarkupString)Markdown.ToHtml(PageModel.Content ?? ""))
+                            @((MarkupString)MarkupOrchestrator.Render(PageModel.Content ?? "", PageModel.MarkupType))
                         </div>
                     </div>
                 </div>
@@ -88,6 +100,7 @@
                     Title = page.Title,
                     Slug = page.Slug,
                     Content = page.Content,
+                    MarkupType = page.MarkupType,
                     LastModified = page.LastModified
                 };
             }

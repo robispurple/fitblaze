@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Data.Sqlite;
 using FluentAssertions;
 using Xunit;
+using FitBlaze.Features.Wiki.Services;
+using Moq;
 
 namespace FitBlaze.Tests.Features.Wiki.Pages
 {
@@ -32,6 +34,16 @@ namespace FitBlaze.Tests.Features.Wiki.Pages
 
             Services.AddSingleton(_pageService);
             Services.AddSingleton<ApplicationDbContext>(_dbContext);
+
+            var engineMock = new Mock<IMarkupEngine>();
+            engineMock.Setup(e => e.Render(It.IsAny<string>())).Returns((string s) => s);
+            engineMock.Setup(e => e.Type).Returns(MarkupType.Markdown); // Default fallback
+
+            // Also mock Legacy to avoid issues if needed, though Orchestrator handles missing ones gracefully?
+            // Actually Orchestrator constructor just takes the list.
+            
+            var orchestrator = new MarkupOrchestrator(new [] { engineMock.Object });
+            Services.AddSingleton(orchestrator);
         }
 
         [Fact]

@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore; // Added
 using FitBlaze.Data;
+using FitBlaze.Features.Wiki.Models;
+using FitBlaze.Features.Wiki.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,9 @@ builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<PageService>();
+builder.Services.AddScoped<IMarkupEngine, MarkdownEngine>();
+builder.Services.AddScoped<IMarkupEngine, LegacyFitNesseEngine>();
+builder.Services.AddScoped<MarkupOrchestrator>();
 builder.Services.AddControllers(); // Added for API controllers
 
 var app = builder.Build();
