@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Version Condition="'$(GitVersion_SemVer)' != ''">$(GitVersion_SemVer)</Version>
     <Version Condition="'$(Version)' == ''">0.1.0</Version>
+    <VersionizeVersion>0.1.0</VersionizeVersion>
     <InformationalVersion Condition="'$(GitVersion_InformationalVersion)' != ''">$(GitVersion_InformationalVersion)</InformationalVersion>
     <InformationalVersion Condition="'$(InformationalVersion)' == ''">0.1.0</InformationalVersion>
     <FileVersion Condition="'$(GitVersion_MajorMinorPatch)' != ''">$(GitVersion_MajorMinorPatch)</FileVersion>
