@@ -3,7 +3,7 @@
   "projects": [
     {
       "name": "FitBlaze",
-      "path": ".",
+      "path": "FitBlaze",
       "versionElement": "Version"
     }
   ],
