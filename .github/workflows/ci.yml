@@ -141,7 +141,7 @@ jobs:
 
       - name: Generate changelog with Versionize
         run: |
-          dotnet tool run versionize --skip-commit --skip-tag
+          dotnet tool run versionize --release-as ${{ steps.gitversion.outputs.version }} --skip-commit --skip-tag --skip-dirty
         continue-on-error: true
 
       - name: Commit and push changelog
