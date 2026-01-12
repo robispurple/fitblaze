@@ -131,7 +131,7 @@ jobs:
       - name: Get current version
         id: gitversion
         run: |
-          VERSION=$(dotnet tool run dotnet-gitversion | grep -oP '"SemVer":\s*"\K[^"]+')
+          VERSION=$(dotnet tool run dotnet-gitversion -- /showvariable SemVer)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Configure git
@@ -141,7 +141,7 @@ jobs:
 
       - name: Generate changelog with Versionize
         run: |
-          dotnet tool run versionize --skip-version
+          dotnet tool run versionize --release-as ${{ steps.gitversion.outputs.version }} --skip-commit --skip-tag --skip-dirty
         continue-on-error: true
 
       - name: Commit and push changelog
