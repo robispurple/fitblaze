@@ -79,7 +79,7 @@ git commit -m "chore: Update dependencies"
 4. **Test & fix on release** → Bug fixes only
 5. **Merge to main** → GitVersion: X.Y.Z (final)
 6. **Run Versionize** → Generates CHANGELOG.md (no version bump)
-7. **Tag & push** → Ready for release
+7. **Tag & push** → **Automated by CI**: The `ci.yml` workflow automatically creates the git tag and GitHub Release upon successful build on `main`.
 
 ## Checking Versions
 

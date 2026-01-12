@@ -103,11 +103,12 @@ Only `blocks` dependencies affect the ready work queue.
     - Run `dotnet test`
     - File P0 issues if quality gates are broken
 3. **Verify version bump** (if code changes were made):
-    - Check current version: `dotnet-gitversion`
-    - If version should be bumped, ensure commits have proper `+semver:` markers
-    - For features: `+semver: minor` or `+semver: major` (breaking)
-    - For bugfixes: `+semver: patch` (default)
-    - For docs/chores: `+semver: none`
+    - **CRITICAL**: Run `dotnet-gitversion` locally to see the *calculated next version*.
+    - Ensure this version matches your expectation (e.g., `0.1.1` for a fix, `0.2.0` for a feature).
+    - If the version is incorrect (e.g. stuck at `0.1.0`):
+        - Check your commit messages for Conventional Commits compliance (`feat:`, `fix:`, etc.).
+        - Amend the last commit if needed: `git commit --amend -m "fix: your message" -m "+semver: patch"`
+    - **Note**: exact tagging happens automatically in CI on `main`. Your job is to verify `dotnet-gitversion` predicts the correct number.
 4. **Update beads issues** - close finished work, update status
 5. **PUSH TO REMOTE - NON-NEGOTIABLE** - This step is MANDATORY. Execute ALL commands below:
    ```bash
@@ -542,8 +543,10 @@ git commit -m "docs: Add GitVersion guide" +semver: none
    versionize --skip-version
    ```
 
-8. **Create and push release tag**
+8. **Create and push release tag** (Automated by CI)
    ```bash
+   # CI/CD (ci.yml) performs this automatically on merge to main.
+   # Manual fallback if CI fails:
    git tag -a vX.Y.Z -m "Release version X.Y.Z"
    git push origin main --tags
    ```
