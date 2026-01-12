@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using FitBlaze.Features.Wiki.Models;
-using FitBlaze.Features.Wiki.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
+using FitBlaze.Utilities;
 
 namespace FitBlaze.Data
 {
@@ -25,6 +26,8 @@ namespace FitBlaze.Data
             return await _context.Pages.FindAsync(id);
         }
 
+        // Removed private GenerateSlug in favor of SlugGenerator.Generate
+
         public async Task<Page?> GetPageBySlugAsync(string slug)
         {
             return await _context.Pages.FirstOrDefaultAsync(p => p.Slug == slug);
@@ -36,17 +39,16 @@ namespace FitBlaze.Data
             {
                 newPage.Slug = SlugGenerator.Generate(newPage.Title);
             }
-
             newPage.LastModified = DateTime.UtcNow;
-            _context.Pages.Add(newPage);
 
             try
             {
+                _context.Pages.Add(newPage);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
             {
-                throw new DuplicateSlugException(newPage.Slug, ex);
+                throw new DuplicateSlugException(newPage.Slug);
             }
 
             return newPage;
@@ -72,18 +74,13 @@ namespace FitBlaze.Data
             }
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
             {
-                throw new DuplicateSlugException(existingPage.Slug, ex);
+                throw new DuplicateSlugException(existingPage.Slug);
             }
 
             return existingPage;
         }
 
-        private bool IsUniqueConstraintViolation(DbUpdateException ex)
-        {
-            // For SQLite, the error message/code for unique constraint is usually related to "UNIQUE constraint failed"
-            // We can check the inner exception.
-            return ex.InnerException?.Message?.Contains("UNIQUE constraint failed") ?? false;
-        }
+
 
         public async Task<bool> DeletePageAsync(int id)
         {
@@ -106,6 +103,19 @@ namespace FitBlaze.Data
                 query = query.Where(p => p.Id != excludeId.Value);
             }
             return !await query.AnyAsync(p => p.Slug == slug);
+        }
+
+        private bool IsUniqueConstraintViolation(DbUpdateException ex)
+        {
+            return ex.InnerException is SqliteException sqliteEx && sqliteEx.SqliteErrorCode == 19;
+        }
+    }
+
+    public class DuplicateSlugException : Exception
+    {
+        public DuplicateSlugException(string slug)
+            : base($"A page with the slug '{slug}' already exists.")
+        {
         }
     }
 }

@@ -16,7 +16,7 @@ namespace FitBlaze.Migrations
                 table: "Pages",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValue: new DateTime(2026, 1, 7, 0, 0, 0, 0, DateTimeKind.Utc));
 
             migrationBuilder.AddColumn<string>(
                 name: "Slug",
@@ -24,6 +24,8 @@ namespace FitBlaze.Migrations
                 type: "TEXT",
                 nullable: false,
                 defaultValue: "");
+
+
         }
 
         /// <inheritdoc />

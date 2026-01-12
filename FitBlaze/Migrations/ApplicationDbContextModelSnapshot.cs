@@ -30,9 +30,6 @@ namespace FitBlaze.Migrations
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("MarkupType")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("TEXT");

@@ -5,24 +5,23 @@
 namespace FitBlaze.Migrations
 {
     /// <inheritdoc />
-    public partial class AddMarkupType : Migration
+    public partial class AddUniqueIndexToPageSlug : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "MarkupType",
+            migrationBuilder.CreateIndex(
+                name: "IX_Pages_Slug",
                 table: "Pages",
-                type: "INTEGER",
-                nullable: false,
-                defaultValue: 0);
+                column: "Slug",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "MarkupType",
+            migrationBuilder.DropIndex(
+                name: "IX_Pages_Slug",
                 table: "Pages");
         }
     }

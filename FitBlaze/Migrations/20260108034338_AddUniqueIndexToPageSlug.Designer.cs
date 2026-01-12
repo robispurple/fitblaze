@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitBlaze.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260108031641_AddMarkupType")]
-    partial class AddMarkupType
+    [Migration("20260108034338_AddUniqueIndexToPageSlug")]
+    partial class AddUniqueIndexToPageSlug
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,9 +33,6 @@ namespace FitBlaze.Migrations
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("MarkupType")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -45,6 +42,9 @@ namespace FitBlaze.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
 
                     b.ToTable("Pages");
                 });

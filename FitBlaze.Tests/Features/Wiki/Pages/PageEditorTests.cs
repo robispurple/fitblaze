@@ -7,12 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Data.Sqlite;
 using FluentAssertions;
 using Xunit;
-using FitBlaze.Features.Wiki.Services;
-using Moq;
 
 namespace FitBlaze.Tests.Features.Wiki.Pages
 {
-    public class PageEditorTests : BunitContext, IDisposable
+    public class PageEditorTests : BunitContext, IAsyncLifetime
     {
         private readonly SqliteConnection _connection;
         private readonly ApplicationDbContext _dbContext;
@@ -34,16 +32,6 @@ namespace FitBlaze.Tests.Features.Wiki.Pages
 
             Services.AddSingleton(_pageService);
             Services.AddSingleton<ApplicationDbContext>(_dbContext);
-
-            var engineMock = new Mock<IMarkupEngine>();
-            engineMock.Setup(e => e.Render(It.IsAny<string>())).Returns((string s) => s);
-            engineMock.Setup(e => e.Type).Returns(MarkupType.Markdown); // Default fallback
-
-            // Also mock Legacy to avoid issues if needed, though Orchestrator handles missing ones gracefully?
-            // Actually Orchestrator constructor just takes the list.
-
-            var orchestrator = new MarkupOrchestrator(new[] { engineMock.Object });
-            Services.AddSingleton(orchestrator);
         }
 
         [Fact]
@@ -118,12 +106,14 @@ namespace FitBlaze.Tests.Features.Wiki.Pages
             cut.Markup.Should().Contain("The slug 'existing-page' is already in use");
         }
 
-        public new void Dispose()
+        public Task InitializeAsync() => Task.CompletedTask;
+
+        public Task DisposeAsync()
         {
             _dbContext.Dispose();
             _connection.Close();
             _connection.Dispose();
-            base.Dispose();
+            return Task.CompletedTask;
         }
     }
 }

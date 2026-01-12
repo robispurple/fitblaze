@@ -1,7 +1,7 @@
 @page "/wiki/{Slug}"
 @inject PageService PageService
 @inject NavigationManager NavigationManager
-@inject MarkupOrchestrator MarkupOrchestrator
+@inject IJSRuntime JSRuntime
 
 <div class="wiki-page">
     @if (wikiPage == null)
@@ -42,18 +42,19 @@
         </div>
 
         <div class="wiki-content">
-            @((MarkupString)MarkupOrchestrator.Render(wikiPage.Content, wikiPage.MarkupType))
+            @((MarkupString)Markdown.ToHtml(wikiPage.Content, _pipeline))
         </div>
     }
 </div>
 
-@using FitBlaze.Features.Wiki.Services
 @code {
     [Parameter]
     public string Slug { get; set; } = string.Empty;
 
     private Page? wikiPage;
     private bool isLoading = true;
+
+    private MarkdownPipeline _pipeline = new MarkdownPipelineBuilder().DisableHtml().Build();
 
     protected override async Task OnParametersSetAsync()
     {
@@ -64,14 +65,26 @@
 
     private async Task DeletePage()
     {
-        if (wikiPage != null)
+        if (wikiPage == null) return;
+
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete page '{wikiPage.Title}'?");
+        if (!confirmed) return;
+
+        try
         {
-            // Note: In a real app, show a confirmation dialog first
             var result = await PageService.DeletePageAsync(wikiPage.Id);
             if (result)
             {
                 NavigationManager.NavigateTo("/wiki");
             }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Failed to delete page. It may have already been deleted.");
+            }
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"An error occurred while deleting the page: {ex.Message}");
         }
     }
 }
