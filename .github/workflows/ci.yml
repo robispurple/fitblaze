@@ -151,6 +151,8 @@ jobs:
           else
             git add CHANGELOG.md .versionize
             git commit -m "chore: generate changelog for release"
+            git tag v${{ steps.gitversion.outputs.version }}
+            git push origin v${{ steps.gitversion.outputs.version }}
             git push
           fi
         continue-on-error: true
