@@ -1,0 +1,58 @@
+@inherits LayoutComponentBase
+@layout FitBlaze.Shared.MainLayout
+@using FitBlaze.Features.Wiki.Components
+
+<div class="wiki-layout-container">
+    <div class="wiki-sidebar-col d-none d-md-block">
+        <WikiSidebar />
+    </div>
+
+    <div class="wiki-main-col">
+        <!-- Mobile Sidebar Toggle -->
+        <div class="d-md-none mb-3">
+             <button class="btn btn-outline-secondary w-100" @onclick="ToggleSidebar">
+                @if (showMobileSidebar) { <span>Hide Pages</span> } else { <span>Show Pages</span> }
+            </button>
+        </div>
+
+        @if (showMobileSidebar)
+        {
+            <div class="d-md-none mb-3 border rounded">
+                <WikiSidebar />
+            </div>
+        }
+
+        <div class="wiki-body">
+            @Body
+        </div>
+    </div>
+</div>
+
+<style>
+    .wiki-layout-container {
+        display: flex;
+        flex-direction: row;
+        gap: 1.5rem;
+        height: 100%;
+    }
+
+    .wiki-sidebar-col {
+        width: 250px;
+        flex-shrink: 0;
+        border-right: 1px solid #dee2e6;
+    }
+
+    .wiki-main-col {
+        flex-grow: 1;
+        min-width: 0; /* Prevent flex item from overflowing */
+    }
+</style>
+
+@code {
+    private bool showMobileSidebar = false;
+
+    private void ToggleSidebar()
+    {
+        showMobileSidebar = !showMobileSidebar;
+    }
+}
